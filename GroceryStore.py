@@ -225,3 +225,6 @@ def basket_menu(basket):
             print("Sugar:", basket_nutrition["sugar"], "g")
             print("Fiber:", basket_nutrition["fiber"], "g")
             print("Items in the basket: ", basket.get_formatted_items())
+
+
+
