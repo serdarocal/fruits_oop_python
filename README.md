@@ -8,4 +8,4 @@ To-do List:
 - [X] Store object will be created
 - [X] User object will be created
 - [X] CLI will be created
-- [ ] Simulation will be created
+- [X] Simulation will be created

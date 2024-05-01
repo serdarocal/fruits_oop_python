@@ -227,4 +227,24 @@ def basket_menu(basket):
             print("Items in the basket: ", basket.get_formatted_items())
 
 
+if __name__ == "__main__":
+    grocer_basket = Basket()
+    grocer_basket.add(Apple())
+    grocer_basket.add(Apple())
+    grocer_basket.add(Apple())
+    grocer_basket.add(Apple())
+    grocer_basket.add(Banana())
+    grocer_basket.add(Banana())
+    grocer_basket.add(Banana())
+    grocer_basket.add(Orange())
+    grocer_basket.add(Orange())
+    grocer_basket.add(Kiwi())
+    grocery_store = GroceryStore(basket=grocer_basket)
+
+    user = User()
+
+    run_menu(user, grocery_store)
+
+
+
 
