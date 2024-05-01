@@ -121,13 +121,11 @@ class GroceryStore:
         self.basket = basket
         self.balance = balance
 
-    def give_fruit(self, item_type):
-        basket = self.basket
-        for fruit in basket.items:
-            if fruit.get_type() == item_type:
-                basket.remove(fruit)
-                self.balance += fruit.price
-                return fruit
+    def sell_fruit(self, item_type):
+        fruit = self.basket.remove(item_type)
+        if fruit is not None:
+            self.balance += fruit.price
+            return fruit
         return None
 
 
@@ -137,12 +135,32 @@ class User:
         self.balance = balance
 
 
+def pay_menu(user, grocery_store):
+    total_price = user.basket.get_total_price()
+    print("Total price of the basket is", "%.2f" % total_price, "$")
+    print("Your balance is", "%.2f" % user.balance, "$")
+    print("Do you want to pay for the basket?")
+    print("Type 'Yes' to pay")
+    print("Type 'No' to cancel")
+    command = input("Enter your command: ")
+    if command == "No":
+        print("Payment canceled.")
+        return
+    if user.balance >= total_price:
+        user.balance -= total_price
+        user.basket.clear()
+        grocery_store.balance += total_price
+        print("Payment successful!")
+    else:
+        print("You do not have enough money to pay for the basket.")
+    input("Enter to continue...")
+
+
 def run_menu(user, grocery_store):
-    loop_menu = True
-    while loop_menu:
+    while True:
         available_fruits = grocery_store.basket.get_fruit_types()
         print("Welcome to the GreenGrocer!")
-        print("You have", user.balance, "$ in your account.")
+        print("You have", "%.2f" % user.balance, "$ in your account.")
         print("Type any of the following lines to perform the corresponding action:")
         print("Add <fruit> - To add a fruit to the basket")
         print("Remove <fruit> - To remove a fruit from the basket")
@@ -157,44 +175,47 @@ def run_menu(user, grocery_store):
 
         user_input = input("Enter your command: ")
         user_input = user_input.split(" ")
-        command = user_input[0]
+
+        command = user_input[0].capitalize()
 
         if command == "Exit":
-            loop_menu = False
+            return
         elif command == "Basket":
             basket_menu(basket=user.basket)
+            print("")
+            print("")
+            continue
         elif command == "Pay":
-            total_price = user.basket.get_total_price()
-            if user.balance >= total_price:
-                user.balance -= total_price
-                for item in user.basket.items:
-                    grocery_store.basket.add(item)
-                user.basket.clear()
-                grocery_store.balance += total_price
-                print("Payment successful!")
-            else:
-                print("You do not have enough money to pay for the basket.")
+            pay_menu(user=user, grocery_store=grocery_store)
+            print("")
+            print("")
+            continue
         elif command == "Add" or command == "Remove":
-            fruit_name = user_input[1]
+            fruit_name = user_input[1].capitalize()
             if command == "Add":
-                fruit = grocery_store.give_fruit(item_type=fruit_name)
+                fruit = grocery_store.basket.remove(item_type=fruit_name)
                 if fruit is not None:
                     user.basket.add(fruit)
+                    print("Fruit added to basket.")
                 else:
                     print("The fruit you requested is not available.")
             elif command == "Remove":
                 fruit = user.basket.remove(item_type=fruit_name)
                 if fruit is not None:
                     grocery_store.basket.add(fruit)
+                    print("Fruit removed from basket.")
                 else:
                     print("The fruit you requested is not in your basket.")
-
+        else:
+            print("Invalid command.")
+        input("Enter to continue...")
 
 def basket_menu(basket):
-    loop_menu = True
-    while loop_menu:
+    while True:
         print("")
         print("Basket Menu")
+        print("")
+        print("Items in the basket: ", basket.get_formatted_items())
         print("")
         print("Type any of the following lines to perform the corresponding action:")
         print("Weight - Calculate the total weight of the basket")
@@ -206,25 +227,29 @@ def basket_menu(basket):
         command = input("Enter your command: ")
 
         if command == "Exit":
-            loop_menu = False
+            return
         elif command == "Weight":
             basket_weight = basket.get_total_weight()
-            print("Total weight of the basket is", basket_weight, "g")
+            if basket_weight < 1000:
+                print("Total weight of the basket is", "%.2f" % basket_weight, "g")
+            else:
+                print("Total weight of the basket is", "%.2f" % (basket_weight / 1000), "kg")
             print("Items in the basket: ", basket.get_formatted_items())
         elif command == "Price":
             basket_price = basket.get_total_price()
-            print("Total price of the basket is", basket_price, "$")
+            print("Total price of the basket is", "%.2f" % basket_price, "$")
             print("Items in the basket: ", basket.get_formatted_items())
         elif command == "Nutrition":
             basket_nutrition = basket.get_total_nutrition()
             print("Total nutrition of the basket is:")
-            print("Protein:", basket_nutrition["protein"], "g")
-            print("Carbohydrates:", basket_nutrition["carbohydrates"], "g")
-            print("Fat:", basket_nutrition["fat"], "g")
-            print("Water:", basket_nutrition["water"], "g")
-            print("Sugar:", basket_nutrition["sugar"], "g")
-            print("Fiber:", basket_nutrition["fiber"], "g")
+            print("Protein:", "%.2f" % basket_nutrition["protein"], "g")
+            print("Carbohydrates:", "%.2f" % basket_nutrition["carbohydrates"], "g")
+            print("Fat:", "%.2f" % basket_nutrition["fat"], "g")
+            print("Water:", "%.2f" % basket_nutrition["water"], "g")
+            print("Sugar:", "%.2f" % basket_nutrition["sugar"], "g")
+            print("Fiber:", "%.2f" % basket_nutrition["fiber"], "g")
             print("Items in the basket: ", basket.get_formatted_items())
+        input("Enter to continue...")
 
 
 if __name__ == "__main__":
@@ -244,7 +269,3 @@ if __name__ == "__main__":
     user = User()
 
     run_menu(user, grocery_store)
-
-
-
-
