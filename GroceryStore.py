@@ -121,9 +121,6 @@ class GroceryStore:
         self.basket = basket
         self.balance = balance
 
-    def __str__(self):
-        return str(self.basket)
-
     def give_fruit(self, item_type):
         basket = self.basket
         for fruit in basket.items:
@@ -132,4 +129,11 @@ class GroceryStore:
                 self.balance += fruit.price
                 return fruit
         return None
+
+
+class User:
+    def __init__(self, balance=200):
+        self.basket = Basket()
+        self.balance = balance
+
 
