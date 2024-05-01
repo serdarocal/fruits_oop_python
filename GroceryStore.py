@@ -135,7 +135,7 @@ class User:
         self.balance = balance
 
 
-def pay_menu(user, grocery_store):
+def pay_menu():
     total_price = user.basket.get_total_price()
     print("Total price of the basket is", "%.2f" % total_price, "$")
     print("Your balance is", "%.2f" % user.balance, "$")
@@ -156,7 +156,7 @@ def pay_menu(user, grocery_store):
     input("Enter to continue...")
 
 
-def run_menu(user, grocery_store):
+def run_menu():
     while True:
         available_fruits = grocery_store.basket.get_fruit_types()
         print("Welcome to the GreenGrocer!")
@@ -186,7 +186,7 @@ def run_menu(user, grocery_store):
             print("")
             continue
         elif command == "Pay":
-            pay_menu(user=user, grocery_store=grocery_store)
+            pay_menu()
             print("")
             print("")
             continue
@@ -209,6 +209,7 @@ def run_menu(user, grocery_store):
         else:
             print("Invalid command.")
         input("Enter to continue...")
+
 
 def basket_menu(basket):
     while True:
@@ -268,4 +269,4 @@ if __name__ == "__main__":
 
     user = User()
 
-    run_menu(user, grocery_store)
+    run_menu()
