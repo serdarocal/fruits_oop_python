@@ -7,5 +7,5 @@ To-do List:
 - [X] Basket object will be created
 - [X] Store object will be created
 - [X] User object will be created
-- [ ] CLI will be created
+- [X] CLI will be created
 - [ ] Simulation will be created
