@@ -47,7 +47,7 @@ class Kiwi(Fruit):
                          nutrit_val_sugar=9.0, nutrit_val_fiber=3.0)
 
 
-class Cart:
+class Basket:
     def __init__(self):
         self.items = []
 
