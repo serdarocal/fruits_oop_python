@@ -115,3 +115,21 @@ class Basket:
             formatted_items += str(items[item]) + "x" + item + ", "
         return formatted_items
 
+
+class GroceryStore:
+    def __init__(self, basket=Basket(), balance=0.0):
+        self.basket = basket
+        self.balance = balance
+
+    def __str__(self):
+        return str(self.basket)
+
+    def give_fruit(self, item_type):
+        basket = self.basket
+        for fruit in basket.items:
+            if fruit.get_type() == item_type:
+                basket.remove(fruit)
+                self.balance += fruit.price
+                return fruit
+        return None
+
