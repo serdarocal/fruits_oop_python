@@ -1,4 +1,6 @@
 import random
+from datetime import datetime as dt
+from datetime import timedelta
 
 
 class Fruit:
@@ -14,9 +16,17 @@ class Fruit:
         self.water = nutrit_val_water * per_100g
         self.sugar = nutrit_val_sugar * per_100g
         self.fiber = nutrit_val_fiber * per_100g
+        now = dt.now()
+        min_datetime = now - timedelta(days=90)
+        min_seconds_difference = (now - min_datetime).total_seconds()
+        random_seconds = random.randint(0, int(min_seconds_difference))
+        self.datetime = now - timedelta(seconds=random_seconds)
 
     def get_type(self):
         return self.__class__.__name__
+
+    def is_fresh(self):
+        pass
 
 
 class Apple(Fruit):
@@ -25,12 +35,18 @@ class Apple(Fruit):
                          nutrit_val_carbohydrates=13.8, nutrit_val_fat=0.2, nutrit_val_water=85.6,
                          nutrit_val_sugar=10.4, nutrit_val_fiber=2.4)
 
+    def is_fresh(self):
+        return self.datetime + timedelta(days=10) > dt.now()
+
 
 class Banana(Fruit):
     def __init__(self):
         super().__init__(weight_avg=200, weight_range=100, price=3, nutrit_val_protein=1.1,
                          nutrit_val_carbohydrates=22.8, nutrit_val_fat=0.3, nutrit_val_water=74.9,
                          nutrit_val_sugar=12.2, nutrit_val_fiber=2.6)
+
+    def is_fresh(self):
+        return self.datetime + timedelta(days=7) > dt.now()
 
 
 class Orange(Fruit):
@@ -39,12 +55,18 @@ class Orange(Fruit):
                          nutrit_val_carbohydrates=8.3, nutrit_val_fat=0.2, nutrit_val_water=88.0,
                          nutrit_val_sugar=8.2, nutrit_val_fiber=2.1)
 
+    def is_fresh(self):
+        return self.datetime + timedelta(days=20) > dt.now()
+
 
 class Kiwi(Fruit):
     def __init__(self):
         super().__init__(weight_avg=100, weight_range=50, price=1, nutrit_val_protein=1.1,
                          nutrit_val_carbohydrates=14.7, nutrit_val_fat=0.5, nutrit_val_water=83.1,
                          nutrit_val_sugar=9.0, nutrit_val_fiber=3.0)
+
+    def is_fresh(self):
+        return self.datetime + timedelta(days=30) > dt.now()
 
 
 class Basket:
@@ -255,20 +277,19 @@ def basket_menu(basket):
             print("Items in the basket: ", basket.get_formatted_items())
         input("Enter to continue...")
 
-
 if __name__ == "__main__":
-    grocer_basket = Basket()
-    grocer_basket.add(Apple())
-    grocer_basket.add(Apple())
-    grocer_basket.add(Apple())
-    grocer_basket.add(Apple())
-    grocer_basket.add(Banana())
-    grocer_basket.add(Banana())
-    grocer_basket.add(Banana())
-    grocer_basket.add(Orange())
-    grocer_basket.add(Orange())
-    grocer_basket.add(Kiwi())
-    grocery_store = GroceryStore(basket=grocer_basket)
+    grocery_basket = Basket()
+    grocery_basket.add(Apple())
+    grocery_basket.add(Apple())
+    grocery_basket.add(Apple())
+    grocery_basket.add(Apple())
+    grocery_basket.add(Banana())
+    grocery_basket.add(Banana())
+    grocery_basket.add(Banana())
+    grocery_basket.add(Orange())
+    grocery_basket.add(Orange())
+    grocery_basket.add(Kiwi())
+    grocery_store = GroceryStore(basket=grocery_basket)
 
     user = User()
 
