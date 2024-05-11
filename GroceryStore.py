@@ -36,7 +36,10 @@ class Apple(Fruit):
                          nutrit_val_sugar=10.4, nutrit_val_fiber=2.4)
 
     def is_fresh(self):
-        return self.datetime + timedelta(days=10) > dt.now()
+        if self.datetime + timedelta(days=30) > dt.now():
+            return "Fresh"
+        else:
+            return "Not fresh"
 
 
 class Banana(Fruit):
@@ -46,7 +49,10 @@ class Banana(Fruit):
                          nutrit_val_sugar=12.2, nutrit_val_fiber=2.6)
 
     def is_fresh(self):
-        return self.datetime + timedelta(days=7) > dt.now()
+        if self.datetime + timedelta(days=30) > dt.now():
+            return "Fresh"
+        else:
+            return "Not fresh"
 
 
 class Orange(Fruit):
@@ -56,7 +62,10 @@ class Orange(Fruit):
                          nutrit_val_sugar=8.2, nutrit_val_fiber=2.1)
 
     def is_fresh(self):
-        return self.datetime + timedelta(days=20) > dt.now()
+        if self.datetime + timedelta(days=30) > dt.now():
+            return "Fresh"
+        else:
+            return "Not fresh"
 
 
 class Kiwi(Fruit):
@@ -66,7 +75,10 @@ class Kiwi(Fruit):
                          nutrit_val_sugar=9.0, nutrit_val_fiber=3.0)
 
     def is_fresh(self):
-        return self.datetime + timedelta(days=30) > dt.now()
+        if self.datetime + timedelta(days=30) > dt.now():
+            return "Fresh"
+        else:
+            return "Not fresh"
 
 
 class Basket:
@@ -189,6 +201,7 @@ def run_menu():
         print("You have", formatted_number(user.balance), "$ in your account.")
         print("Type any of the following lines to perform the corresponding action:")
         print("Add <fruit> - To add a fruit to the basket")
+        print("Choose <fruit> - Choose the fruit with detailed information")
         print("Remove <fruit> - To remove a fruit from the basket")
         print("Pay - To pay for the basket")
         print("Basket - To view the basket menu")
@@ -215,7 +228,7 @@ def run_menu():
             print("")
             print("")
             continue
-        elif command == "Add" or command == "Remove":
+        elif command == "Add" or command == "Remove" or command == "Choose":
             fruit_name = user_input[1].capitalize()
             if command == "Add":
                 fruit = grocery_store.basket.remove(item_type=fruit_name)
@@ -231,6 +244,20 @@ def run_menu():
                     print("Fruit removed from basket.")
                 else:
                     print("The fruit you requested is not in your basket.")
+            elif command == "Choose":
+                print("Choose", fruit_name, "from the basket via entering the index of the fruit")
+                print("or type 'q' to pay for the basket.")
+                for index, fruit in enumerate(grocery_store.basket.items):
+                    if fruit.get_type() == fruit_name:
+                        print(f"{index}: Weight: {fruit.weight}g, Is fresh? {fruit.is_fresh()}")
+                selection = input("Enter id:")
+                if selection != "q":
+                    entered_index = int(selection)
+                    selected_fruit = grocery_store.basket.items[entered_index]
+                    grocery_store.basket.items.remove(selected_fruit)
+                    user.basket.add(selected_fruit)
+                    print("Fruit added to basket.")
+
         else:
             print("Invalid command.")
         input("Enter to continue...")
@@ -277,7 +304,16 @@ def basket_menu(basket):
             print("Items in the basket: ", basket.get_formatted_items())
         input("Enter to continue...")
 
+
+def test_ovverriding():
+    basket = [Apple(), Banana(), Orange(), Kiwi()]
+    for item in basket:
+        print(item.datetime)
+        print(item.is_fresh())
+
+
 if __name__ == "__main__":
+    # test_ovverriding()
     grocery_basket = Basket()
     grocery_basket.add(Apple())
     grocery_basket.add(Apple())
