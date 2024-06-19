@@ -2,11 +2,30 @@ import random
 from datetime import datetime as dt
 from datetime import timedelta
 
+class StorageCondition:
+    def get_condition_name(self):
+        return self.__class__.__name__
 
+    def is_fresh(self, fruit_datetime, best_before_days):
+        raise NotImplementedError("This method should be overridden by subclasses")
+
+class RoomTemperatureCondition(StorageCondition):
+    def is_fresh(self, fruit_datetime, best_before_days):
+        if fruit_datetime + timedelta(days=best_before_days) > dt.now():
+            return "Fresh"
+        else:
+            return "Not fresh"
+
+class RefrigeratedCondition(StorageCondition):
+    def is_fresh(self, fruit_datetime, best_before_days):
+        if fruit_datetime + timedelta(days=int(best_before_days * 1.5)) > dt.now():
+            return "Fresh"
+        else:
+            return "Not fresh"
 class Fruit:
     def __init__(self, weight_avg, weight_range, price, nutrit_val_protein, nutrit_val_carbohydrates, nutrit_val_fat,
                  nutrit_val_water,
-                 nutrit_val_sugar, nutrit_val_fiber):
+                 nutrit_val_sugar, nutrit_val_fiber,best_before_days,storage_condition):
         self.weight = random.randint(weight_avg - weight_range, weight_avg + weight_range)
         self.price = price
         per_100g = self.weight / 100
@@ -16,6 +35,8 @@ class Fruit:
         self.water = nutrit_val_water * per_100g
         self.sugar = nutrit_val_sugar * per_100g
         self.fiber = nutrit_val_fiber * per_100g
+        self.best_before_days = best_before_days
+        self.storage_condition = storage_condition
         now = dt.now()
         min_datetime = now - timedelta(days=90)
         min_seconds_difference = (now - min_datetime).total_seconds()
@@ -26,59 +47,43 @@ class Fruit:
         return self.__class__.__name__
 
     def is_fresh(self):
-        pass
+        return self.storage_condition.is_fresh(self.datetime, self.best_before_days)
+    def get_storage_condition_name(self):
+        return self.storage_condition.get_condition_name()
 
 
 class Apple(Fruit):
     def __init__(self):
         super().__init__(weight_avg=150, weight_range=50, price=2, nutrit_val_protein=0.3,
                          nutrit_val_carbohydrates=13.8, nutrit_val_fat=0.2, nutrit_val_water=85.6,
-                         nutrit_val_sugar=10.4, nutrit_val_fiber=2.4)
+                         nutrit_val_sugar=10.4, nutrit_val_fiber=2.4,best_before_days=30,storage_condition=RoomTemperatureCondition())
 
-    def is_fresh(self):
-        if self.datetime + timedelta(days=30) > dt.now():
-            return "Fresh"
-        else:
-            return "Not fresh"
+
 
 
 class Banana(Fruit):
     def __init__(self):
         super().__init__(weight_avg=200, weight_range=100, price=3, nutrit_val_protein=1.1,
                          nutrit_val_carbohydrates=22.8, nutrit_val_fat=0.3, nutrit_val_water=74.9,
-                         nutrit_val_sugar=12.2, nutrit_val_fiber=2.6)
+                         nutrit_val_sugar=12.2, nutrit_val_fiber=2.6,best_before_days=7,storage_condition=RefrigeratedCondition())
 
-    def is_fresh(self):
-        if self.datetime + timedelta(days=30) > dt.now():
-            return "Fresh"
-        else:
-            return "Not fresh"
+
 
 
 class Orange(Fruit):
     def __init__(self):
         super().__init__(weight_avg=300, weight_range=100, price=4, nutrit_val_protein=1.0,
                          nutrit_val_carbohydrates=8.3, nutrit_val_fat=0.2, nutrit_val_water=88.0,
-                         nutrit_val_sugar=8.2, nutrit_val_fiber=2.1)
+                         nutrit_val_sugar=8.2, nutrit_val_fiber=2.1,best_before_days=15,storage_condition=RefrigeratedCondition())
 
-    def is_fresh(self):
-        if self.datetime + timedelta(days=30) > dt.now():
-            return "Fresh"
-        else:
-            return "Not fresh"
+
 
 
 class Kiwi(Fruit):
     def __init__(self):
         super().__init__(weight_avg=100, weight_range=50, price=1, nutrit_val_protein=1.1,
                          nutrit_val_carbohydrates=14.7, nutrit_val_fat=0.5, nutrit_val_water=83.1,
-                         nutrit_val_sugar=9.0, nutrit_val_fiber=3.0)
-
-    def is_fresh(self):
-        if self.datetime + timedelta(days=30) > dt.now():
-            return "Fresh"
-        else:
-            return "Not fresh"
+                         nutrit_val_sugar=9.0, nutrit_val_fiber=3.0,best_before_days=20,storage_condition=RefrigeratedCondition())
 
 
 class Basket:
@@ -249,7 +254,7 @@ def run_menu():
                 print("or type 'q' to pay for the basket.")
                 for index, fruit in enumerate(grocery_store.basket.items):
                     if fruit.get_type() == fruit_name:
-                        print(f"{index}: Weight: {fruit.weight}g, Is fresh? {fruit.is_fresh()}")
+                        print(f"{index}: Weight: {fruit.weight}g, Is fresh? {fruit.is_fresh()}, Storage Condition: {fruit.get_storage_condition_name()}")
                 selection = input("Enter id:")
                 if selection != "q":
                     entered_index = int(selection)
